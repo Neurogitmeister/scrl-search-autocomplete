@@ -11,10 +11,10 @@ const userAvatarsApiUri = "https://jsonplaceholder.typicode.com/photos"
 export default () => { 
 
   const [loading, setIsLoading] = useState(true);
-  const [users, setUsers] = useState<UserWithAvatar[]>();
+  const [users, setUsers] = useState<UserWithAvatar[]>([]);
 
-  // const [filteredUsers, setFilteredUsers] = useState([]);
-  // const [searchStr, setSearchStr] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState<UserWithAvatar[]>([]);
+  const [searchStr, setSearchStr] = useState('');
 
   useEffect(() => {
     fetch(usersApiUri).then(res => {
@@ -31,12 +31,18 @@ export default () => {
     });
   }, []);
 
+  useEffect(() => {
+    searchStr.length ? setFilteredUsers(users.filter(user => user.name.search(searchStr) !== -1) ?? []) : setFilteredUsers(users);
+  }, [searchStr, users])
+
   return(
     <Styles>
+      <input onChange={it => setSearchStr(it.currentTarget.value)} />
       <div className="users-list">
+
         {loading && <div className="spinner-overlay"> <GradientSpinner /> </div>}
         {!loading && <> 
-          {users?.map((user) => <UserTile {...user} key={user.id} />)}
+          {filteredUsers.map((user) => <UserTile {...user} key={user.id} />)}
         </>}
       </div>
     </Styles>
