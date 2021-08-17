@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 export default (props: UserWithAvatar & {onClick: (name: string) => void}) => {
   return(
-    <Styles onClick={() => props.onClick(props.name)}>
+    <Styles onClick={() => props.onClick(props.name)} className="container">
       <img src={props.avatar.thumbnailUrl} alt={`${props.name}`} />
       <div>
         <span className="name">{props.name}</span>
@@ -16,10 +16,17 @@ export default (props: UserWithAvatar & {onClick: (name: string) => void}) => {
 }
 
 const Styles = styled.div`
-  width: 100%;
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  &:hover {
+    background: #eee;
+  }
+  &:focus {
+    background: inherit;
+  }
   img {
     height: 60px;
     width: 60px;

@@ -50,7 +50,7 @@ export default () => {
         />
       </div>
     
-      <div className="container users-list">
+      <div className="users-list">
         {loading && <div className="spinner-overlay"> <GradientSpinner /> </div>}
         {!loading && <>
           {filteredUsers.map((user) => 
@@ -114,8 +114,7 @@ const Styles = styled.div`
       width: 100%;
     }
     > * {
-      width: fit-content;
-      margin-bottom: 20px;
+      margin-bottom: 6px;
       &:last-child {
         margin-bottom: 0;
       }
