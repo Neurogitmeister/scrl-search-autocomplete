@@ -21,21 +21,19 @@ const Styles = styled.div`
   align-items: center;
   cursor: pointer;
   img {
-    height: 80px;
-    width: 80px;
-    margin-right: 20px;
+    height: 60px;
+    width: 60px;
+    margin-right: 16px;
     border-radius: 50%;
   }
   > div {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    .name {
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
+
     .username {
       color: #999;
+      font-size: calc(8px + 2vmin);
     }
   }
 `

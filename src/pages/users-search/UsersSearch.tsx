@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import styled from 'styled-components';
 
+import searchIcon from '../../assets/magnifying-glass-search.svg';
+
 import { GradientSpinner } from '../../components/spinner'
 import { User, UserAvatar, UserWithAvatar } from './utils';
 import UserTile from './User';
@@ -37,11 +39,20 @@ export default () => {
 
   return(
     <Styles>
-      <input onChange={it => setSearchStr(it.currentTarget.value)} value={searchStr} />
-      <div className="users-list">
-
+      <div className="container input-block">
+        <div className="image-container">
+          <img src={searchIcon} alt="Magnifying glass"/>
+        </div>
+        <input 
+          onChange={it => setSearchStr(it.currentTarget.value)} 
+          value={searchStr}
+          placeholder="Search"
+        />
+      </div>
+    
+      <div className="container users-list">
         {loading && <div className="spinner-overlay"> <GradientSpinner /> </div>}
-        {!loading && <> 
+        {!loading && <>
           {filteredUsers.map((user) => 
             <UserTile 
               key={user.id} 
@@ -51,6 +62,7 @@ export default () => {
             )}
         </>}
       </div>
+
     </Styles>
   )
 }
@@ -58,13 +70,37 @@ export default () => {
 const Styles = styled.div`
   min-height: 100vh;
   height: 100%;
-  padding: 0 50px;
   display: flex;
   flex-direction: column;
+  .input-block {
+    background: #eee;
+    display: flex;
+    align-items: center;
+    height: 70px;
+    border-bottom: 1px solid black;
+    img {
+      height: 26px;
+      display: block;
+    }
+    .image-container {
+      width: 50px;
+      height: 26px;
+    }
+    input {
+      outline: none;
+      border: none;
+      background: transparent;
+      width: calc(100% - 80px);
+      &::placeholder {
+        color: #bbb;
+      }
+    }
+  }
   .users-list {
     flex-grow:1;
     height: 100%;
-    padding: 20px 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
     position: relative;
     .spinner-overlay {
       display: flex;
@@ -72,10 +108,13 @@ const Styles = styled.div`
       justify-content: center;
 
       position: absolute;
-      height: calc(100% - 40px);
+      top: 0;
+      left: 0;
+      height: 100%;
       width: 100%;
     }
     > * {
+      width: fit-content;
       margin-bottom: 20px;
       &:last-child {
         margin-bottom: 0;
