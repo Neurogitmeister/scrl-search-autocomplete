@@ -34,7 +34,7 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    searchStr.length ? setFilteredUsers(users.filter(user => user.name.search(searchStr) !== -1) ?? []) : setFilteredUsers(users);
+    searchStr.length ? setFilteredUsers(users.filter(user => user.name.toLowerCase().search(searchStr.toLowerCase()) !== -1) ?? []) : setFilteredUsers(users);
   }, [searchStr, users])
 
   return(
