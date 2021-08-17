@@ -37,12 +37,18 @@ export default () => {
 
   return(
     <Styles>
-      <input onChange={it => setSearchStr(it.currentTarget.value)} />
+      <input onChange={it => setSearchStr(it.currentTarget.value)} value={searchStr} />
       <div className="users-list">
 
         {loading && <div className="spinner-overlay"> <GradientSpinner /> </div>}
         {!loading && <> 
-          {filteredUsers.map((user) => <UserTile {...user} key={user.id} />)}
+          {filteredUsers.map((user) => 
+            <UserTile 
+              key={user.id} 
+              {...user}  
+              onClick={setSearchStr}
+            />
+            )}
         </>}
       </div>
     </Styles>

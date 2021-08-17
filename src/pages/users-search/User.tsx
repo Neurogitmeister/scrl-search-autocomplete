@@ -3,10 +3,9 @@ import { UserWithAvatar } from './utils'
 import styled from 'styled-components';
 
 
-export default (props: UserWithAvatar) => {
+export default (props: UserWithAvatar & {onClick: (name: string) => void}) => {
   return(
-    <Styles>
-      
+    <Styles onClick={() => props.onClick(props.name)}>
       <img src={props.avatar.thumbnailUrl} alt={`${props.name}`} />
       <div>
         <span className="name">{props.name}</span>
@@ -20,6 +19,7 @@ const Styles = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+  cursor: pointer;
   img {
     height: 80px;
     width: 80px;
