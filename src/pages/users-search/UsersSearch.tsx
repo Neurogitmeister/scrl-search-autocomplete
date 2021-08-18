@@ -24,7 +24,8 @@ const fetchUsersWithAvatarsByName = async (name: string) => {
 
 export default () => { 
 
-  const [loading, setIsLoading] = useState<boolean>();
+  const [showOptions, setShowOptions] = useState(false);
+  const [loading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<UserWithAvatar[]>([]);
 
   const [searchStr, setSearchStr] = useState('');
@@ -36,8 +37,14 @@ export default () => {
     const name = e.currentTarget.value;
     setSelectedUser(undefined);
     setSearchStr(name);
+    if (!name.length) {
+      setShowOptions(false);
+      return;
+    }
+    setShowOptions(true);
     setIsLoading(true);
     lastRequest.current = name;
+
     fetchUsersWithAvatarsByName(name).then(usersWithAvatars => {
       if (lastRequest.current === name) {
         setIsLoading(false);
@@ -64,16 +71,20 @@ export default () => {
       </div>
     
       <div className="users-list">
-        {loading && <div className="spinner-overlay"> <GradientSpinner /> </div>}
-        {!loading && !selectedUser && <>
-          {users.map((user) => 
-            <UserTile 
-              key={user.id} 
-              {...user}  
-              onClick={getUserById}
-            />
-            )}
-        </>}
+        {showOptions && (<>
+          {loading 
+            ? <div className="spinner-overlay"> <GradientSpinner /> </div>
+            : <>
+              {users.map((user) => 
+                <UserTile 
+                key={user.id} 
+                {...user}  
+                  onClick={getUserById}
+                />
+              )}
+            </>
+          }
+        </>)}
       </div>
     </Styles>
   )
