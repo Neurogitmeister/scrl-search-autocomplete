@@ -1,41 +1,54 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useCallback, useRef} from 'react';
 import styled from 'styled-components';
 
 import searchIcon from '../../assets/magnifying-glass-search.svg';
 
-import { GradientSpinner } from '../../components/spinner'
+import { GradientSpinner } from '../../components/spinner';
 import { User, UserAvatar, UserWithAvatar } from './utils';
 import UserTile from './User';
 
-const usersApiUri = "https://jsonplaceholder.typicode.com/users"
-const userAvatarsApiUri = "https://jsonplaceholder.typicode.com/photos"
+const usersApiUri = "https://jsonplaceholder.typicode.com/users";
+const userAvatarsApiUri = "https://jsonplaceholder.typicode.com/photos";
+
+const fetchUsersWithAvatarsByName = async (name: string) => {
+  const res = await fetch(usersApiUri + "/?name_like=" + name);
+  const usersData: User[] = await res.json();
+  const usersWithAvatars: UserWithAvatar[] = [];
+  for (let user of usersData) {             
+    const res = await fetch(userAvatarsApiUri + "/" + user.id);
+    const avatar: UserAvatar = await res.json();  
+    usersWithAvatars.push({...user, avatar});
+  }
+  return usersWithAvatars;
+}
 
 export default () => { 
 
-  const [loading, setIsLoading] = useState(true);
+  const [loading, setIsLoading] = useState<boolean>();
   const [users, setUsers] = useState<UserWithAvatar[]>([]);
 
-  const [filteredUsers, setFilteredUsers] = useState<UserWithAvatar[]>([]);
   const [searchStr, setSearchStr] = useState('');
+  const lastRequest = useRef('');
 
-  useEffect(() => {
-    fetch(usersApiUri).then(res => {
-      res.json().then((usersData: User[]) => {
-        fetch(userAvatarsApiUri).then(res => {
-          res.json().then((avatarsData: UserAvatar[]) => {
-            setTimeout(() => {
-              setUsers(usersData.map((user, i) => ({...user, avatar: avatarsData[i] })));
-              setIsLoading(false);
-            }, 3000);
-          });
-        });
-      });
+  const [selectedUser, setSelectedUser] = useState<UserWithAvatar>();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.currentTarget.value;
+    setSelectedUser(undefined);
+    setSearchStr(name);
+    setIsLoading(true);
+    lastRequest.current = name;
+    fetchUsersWithAvatarsByName(name).then(usersWithAvatars => {
+      if (lastRequest.current === name) {
+        setIsLoading(false);
+        setUsers(usersWithAvatars);
+      }
     });
-  }, []);
+  }
 
-  useEffect(() => {
-    searchStr.length ? setFilteredUsers(users.filter(user => user.name.toLowerCase().search(searchStr.toLowerCase()) !== -1) ?? []) : setFilteredUsers(users);
-  }, [searchStr, users])
+  const getUserById = useCallback((id: string) => {
+    setSelectedUser(users.find(user => user.id === id));
+  } , [users]);
 
   return(
     <Styles>
@@ -44,25 +57,24 @@ export default () => {
           <img src={searchIcon} alt="Magnifying glass"/>
         </div>
         <input 
-          onChange={it => setSearchStr(it.currentTarget.value)} 
-          value={searchStr}
+          onChange={handleInputChange}
+          value={selectedUser?.name ?? searchStr}
           placeholder="Search"
         />
       </div>
     
       <div className="users-list">
         {loading && <div className="spinner-overlay"> <GradientSpinner /> </div>}
-        {!loading && <>
-          {filteredUsers.map((user) => 
+        {!loading && !selectedUser && <>
+          {users.map((user) => 
             <UserTile 
               key={user.id} 
               {...user}  
-              onClick={setSearchStr}
+              onClick={getUserById}
             />
             )}
         </>}
       </div>
-
     </Styles>
   )
 }

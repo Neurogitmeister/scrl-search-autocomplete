@@ -3,9 +3,9 @@ import { UserWithAvatar } from './utils'
 import styled from 'styled-components';
 
 
-export default (props: UserWithAvatar & {onClick: (name: string) => void}) => {
+export default (props: UserWithAvatar & {onClick: (id: string) => void}) => {
   return(
-    <Styles onClick={() => props.onClick(props.name)} className="container">
+    <Styles onClick={() => props.onClick(props.id)} className="container">
       <img src={props.avatar.thumbnailUrl} alt={`${props.name}`} />
       <div>
         <span className="name">{props.name}</span>
